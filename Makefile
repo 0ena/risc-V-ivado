@@ -347,7 +347,6 @@ $(bitstream): $(synthesis)
 	echo "reset_run impl_1" >>$(proj_path)/make-bitstream.tcl
 	echo "launch_runs -to_step write_bitstream -jobs $(MAX_THREADS) impl_1" >>$(proj_path)/make-bitstream.tcl
 	echo "wait_on_run impl_1" >>$(proj_path)/make-bitstream.tcl
-	echo "start_gui" >>$(proj_path)/make-bitstream.tcl
 	$(vivado) -source $(proj_path)/make-bitstream.tcl
 	if find $(proj_path) -name "*.log" -exec cat {} \; | grep 'ERROR: ' ; then exit 1 ; fi
 
@@ -360,6 +359,7 @@ endif
 $(cfgmem_file) $(prm_file): $(CFG_FILES)
 	echo "open_project $(proj_file)" >$(proj_path)/make-mcs.tcl
 	echo "write_cfgmem -format $(CFG_FORMAT) -interface $(CFG_DEVICE) -loadbit {up 0x0 $(bitstream)} $(CFG_BOOT) -file $(cfgmem_file) -force" >>$(proj_path)/make-mcs.tcl
+	echo "start_gui" >>$(proj_path)/make-mcs.tcl
 	$(vivado) -source $(proj_path)/make-mcs.tcl
 
 bitstream: $(bitstream) $(cfgmem_file)
